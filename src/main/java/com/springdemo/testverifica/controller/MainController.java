@@ -4,6 +4,7 @@ import com.springdemo.testverifica.model.*;
 import com.springdemo.testverifica.repository.*;
 import com.springdemo.testverifica.service.ClienteService;
 import com.springdemo.testverifica.service.CorsoService;
+import com.springdemo.testverifica.service.IscrizioneService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 public class MainController {
     private final ClienteService clienteService;
     private final CorsoService corsoService;
+    private final IscrizioneService iscrizioneService;
 
     @GetMapping("/")
     public String index(Model model, @RequestParam(required = false)  String msg) {
@@ -81,7 +83,7 @@ public class MainController {
                                 @RequestParam("cognome") String cognome,
                                 @RequestParam("nome") String nome,
                                 @RequestParam("citta") String citta,
-                                @RequestParam("mail") String telefono,
+                                @RequestParam("telefono") String telefono,
                                 @RequestParam("password") String pass,
                                 @RequestParam("confPassword") String confPass){
         // Data di riferimento: 1 gennaio 1900
@@ -89,12 +91,14 @@ public class MainController {
         if (!pass.equals(confPass)){
             redirectAttributes.addAttribute("msg", "La password non corrisponde");
         }
+        /*
         if (!pass.contains("0") && !pass.contains("1") && !pass.contains("2") && !pass.contains("3") && !pass.contains("4") && !pass.contains("5") && !pass.contains("6") && !pass.contains("7") && !pass.contains("8") && !pass.contains("9")){
             redirectAttributes.addAttribute("msg", "La password deve contenere almeno un numero");
         }
         if (!pass.contains("!") && !pass.contains("@") && !pass.contains("#") && !pass.contains("$") && !pass.contains("%") && !pass.contains("^") && !pass.contains("&") && !pass.contains("*") && !pass.contains("(") && !pass.contains(")")){
             redirectAttributes.addAttribute("msg", "La password deve contenere almeno un carattere speciale");
         }
+        */
         else {
             if (clienteService.getClienteByUsername(username) != null) {
                 redirectAttributes.addAttribute("msg", "Username già esistente");
@@ -109,10 +113,10 @@ public class MainController {
                 admin = 1;
             }
             */
-            Cliente Cliente = new Cliente(username, pass, cognome, nome, citta, telefono);
-            if (Cliente != null) {
-                clienteService.aggiungiCliente(Cliente);
-                session.setAttribute("Cliente", Cliente);
+            Cliente cliente = new Cliente(username, pass, cognome, nome, citta, telefono);
+            if (cliente != null) {
+                clienteService.aggiungiCliente(cliente);
+                session.setAttribute("Cliente", cliente);
                 return "redirect:/riservato";
             }
         }
@@ -144,6 +148,18 @@ public class MainController {
         }
     }
 
+    @PostMapping("/subscribe")
+    public String iscriviti(@RequestParam("idCorso") String idCorso, HttpSession session, RedirectAttributes redirectAttributes) {
+        Cliente cliente= (Cliente) session.getAttribute("Cliente");
+        if (cliente == null) {
+            redirectAttributes.addAttribute("msg", "Accesso non autorizzato");
+            return "redirect:/";
+        }else{
+            String ris = iscrizioneService.addIscrizione(cliente.getUsername(), idCorso);
+            redirectAttributes.addAttribute("msg", ris);
+            return "redirect:/corsi";
+        }
+    }
 
 
 

@@ -10,13 +10,13 @@ import java.time.LocalDate;
 @Service
 @RequiredArgsConstructor
 public class ClienteService {
-    private final ClienteRepository ClienteRepository;
+    private final ClienteRepository clienteRepository;
 
-    public void aggiungiCliente(Cliente Cliente) {
-        ClienteRepository.save(Cliente);
+    public void aggiungiCliente(Cliente cliente) {
+        clienteRepository.save(cliente);
     }
     public Cliente getClienteByUsernameAndPassword(String username, String password) {
-        return ClienteRepository.findByUsernameAndPassword(username, password);
+        return clienteRepository.findByUsernameAndPassword(username, password);
     }
 
     /**
@@ -24,15 +24,15 @@ public class ClienteService {
      * @return
      */
     public Iterable<Cliente> getClienti() {
-        return ClienteRepository.findAll();
+        return clienteRepository.findAll();
 
     }
 
     public Cliente getClienteByUsername(String username) {
-        return ClienteRepository.findByUsername(username);
+        return clienteRepository.findByUsername(username);
     }
 
-    public int aggiornaProfilo(Cliente Cliente,
+    public int aggiornaProfilo(Cliente cliente,
                                String username,
                                String nome,
                                String cognome,
@@ -41,29 +41,29 @@ public class ClienteService {
                                String password, String vecchiaPassword) {
 
         // Trovo l'Cliente loggato con username passato:
-        Cliente ClienteLoggato = ClienteRepository.findByUsername(username);
-        if (ClienteLoggato == null) {
+        Cliente clienteLoggato = clienteRepository.findByUsername(username);
+        if (clienteLoggato == null) {
             return -1;
         }
 
         // Modifico l'Cliente loggato:
-        ClienteLoggato.setNome(nome);
-        ClienteLoggato.setCognome(cognome);
-        ClienteLoggato.setTelefono(telefono);
-        ClienteLoggato.setCitta(citta);
+        clienteLoggato.setNome(nome);
+        clienteLoggato.setCognome(cognome);
+        clienteLoggato.setTelefono(telefono);
+        clienteLoggato.setCitta(citta);
         //ClienteLoggato.setEmail(email);
         //ClienteLoggato.setDataNascita(dataNascita);
 
         // Controllo se c'è una nuova password da aggiornare:
         if (password != null && !password.isEmpty()) {
             // Controllo se la vecchia password è corretta:
-            if (!ClienteLoggato.getPassword().equals(vecchiaPassword)) {
+            if (!clienteLoggato.getPassword().equals(vecchiaPassword)) {
                 return -2; // Se la vecchiaPassword è sbagliata
             }
-            ClienteLoggato.setPassword(password);
+            clienteLoggato.setPassword(password);
         }
         // Aggiorno l'Cliente:
-        ClienteRepository.save(ClienteLoggato);
+        clienteRepository.save(clienteLoggato);
         return 0;
     }
 }
