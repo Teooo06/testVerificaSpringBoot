@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Corsi</title>
+</head>
+<body>
+
+<div class="container mt-5">
+  <h1 class="text-center">Catalogo Dispositivi</h1>
+  <div class="row g-4">
+    <div  th:each="corso : ${elencoCorsi}" class="col-md-3">
+      <div class="card h-100 d-flex flex-column">
+        <div class="card-body mt-auto text-center">
+          <h5 class="card-title" th:text="${corso.idCorso}">Nome prodotto</h5>
+          <h6 class="card-title" th:text="${corso.descrizione}">Descrizione</h6>
+          <h6 class="card-title" th:text="${corso.giornoSettimana}">GiornoDellaSettimana</h6>
+          <h6 class="card-title" th:text="${corso.ora}">Ora</h6>
+          <p class="card-text" th:text="'€' + ${corso.getPrezzoStr()}">€99999,99</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
